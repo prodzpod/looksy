@@ -16,6 +16,7 @@ require("./js/util/math.js");
 require("./js/render/svg.js");
 require("./js/util/puzzle.js");
 require("./js/render/render.js");
+require("./js/ui/puzzle.js");
 
 window.onload = function() {
     let PUZZLE = {
@@ -36,11 +37,11 @@ window.onload = function() {
             new Edge(2, 5)
         ],
         "symbol": {
-            "vertices": {},
+            "vertices": {0: [{type: "sus", fill: 0xABCDEFFF}]},
             "edges": {},
             "faces": {},
             "start": {0: true},
-            "gap": {},
+            "gap": {1: 0.4},
             "line": {},
             "end": {5: true}
         },
@@ -55,4 +56,5 @@ window.onload = function() {
     }
     primePuzzle(PUZZLE);
     drawPuzzle("puzzle", PUZZLE);
+    window.puzzle = PUZZLE;
 }

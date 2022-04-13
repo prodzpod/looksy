@@ -49,3 +49,7 @@ SVG.symbol = { //! Edit this to add new symbols
         SVG.path("M0 1 1 0 0-1-1 0", ORIGIN, fill)
     )},
 }
+
+SVG.renderSymbol = function(params) {
+    return SVG.symbol[params.type](params.fill);
+}

@@ -80,7 +80,8 @@ function populateFacesToVertices(data) {
 }
 
 function populateVerticesToVertices(data) {
-    for (let edge of data.edges) {
+    for (let i in data.edges) {
+        if (data.symbol.gap[i]) continue; let edge = data.edges[i];
         data.verticesToVertices[edge.x].push(edge.y);
         data.verticesToVertices[edge.y].push(edge.x);
     }
@@ -113,6 +114,7 @@ function getFaceInformation(data) {
 function uniqueSort(arr) { return arr.map(x => unique(x).sort()); }
 function uniqueRemoveSort(arr) { for (let i in arr) arr[i] = remove(unique(arr[i]), Number(i)).sort(); return arr; }
 function postProcessArrays(data) {
+    data.verticesToVertices = uniqueRemoveSort(data.verticesToVertices);
     data.verticesToFaces = uniqueSort(data.verticesToFaces);
     data.edgesToEdges = uniqueRemoveSort(data.edgesToEdges);
     data.edgesToFaces = uniqueSort(data.edgesToFaces);
@@ -140,4 +142,14 @@ function primePuzzle(data) {
     postProcessArrays(data);
     
     console.log(data);
+}
+
+function preDrawPuzzle(el, data) {
+    data.element = el;
+    data.vertexElements = [];
+    data.edgeElements = [];
+    data.faceElement = undefined;
+    data.vertexSymbolElements = [];
+    data.edgeSymbolElements = [];
+    data.faceSymbolElements = [];
 }
