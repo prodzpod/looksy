@@ -73,7 +73,7 @@ function drawTapSolve(el, data) {
     for (let i in data.vertices) {
         let text = document.createElement("text");
         text.innerHTML = i;
-        el.appendChild(text.with("x", data.vertices[i].x).with("y", data.vertices[i].y));
+        // el.appendChild(text.with("x", data.vertices[i].x).with("y", data.vertices[i].y));
         el.appendChild(SVG.circle(
             data.vertices[i], 
             data.style.lineWidth * 3, 

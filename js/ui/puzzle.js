@@ -9,8 +9,8 @@ function traceStart(startVertex) {
 
 function trace(vertex) {
     let data = window.puzzle; let puzzle = elem("puzzle"); let line = elem("line");
-    if (data.trace.length === 0 || !data.verticesToVertices[data.trace.at(-1)].includes(vertex)) return;
     if (data.symbol.end[vertex] && data.trace.at(-1) === vertex) return traceEnd();
+    if (data.trace.length === 0 || !data.verticesToVertices[data.trace.at(-1)].includes(vertex)) return;
     if (data.trace.at(-2) === vertex) {
         line.removeChild(line.lastChild);
         line.removeChild(line.lastChild);
