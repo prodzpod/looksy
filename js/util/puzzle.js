@@ -105,7 +105,7 @@ function getFaceInformation(data) {
     for (let i in data.facesToVertices) data.facesToAreas[i] = Math.prec(getArea(...data.facesToVertices[i].map(x => data.vertices[x])));
     data.outside = data.facesToAreas.indexOf(data.facesToAreas.filter(c => c < 0)[0]);
     for (let i in data.facesToVertices) {
-        let label = polylabel([data.facesToVertices[i].map(x => [data.vertices[x].x, data.vertices[x].y])], 0.001);
+        let label = polylabelem([data.facesToVertices[i].map(x => [data.vertices[x].x, data.vertices[x].y])], 0.001);
         data.facesToPosition[i] = new Pos(Math.prec(label[0]), Math.prec(label[1]));
         data.facesToSize[i] = Math.prec(label.distance / Math.SQRT2);
     }
@@ -145,11 +145,5 @@ function primePuzzle(data) {
 }
 
 function preDrawPuzzle(el, data) {
-    data.element = el;
-    data.vertexElements = [];
-    data.edgeElements = [];
-    data.faceElement = undefined;
-    data.vertexSymbolElements = [];
-    data.edgeSymbolElements = [];
-    data.faceSymbolElements = [];
+    data.trace = [];
 }

@@ -1,11 +1,16 @@
 Element.prototype.with = function(id, thing) { this.setAttribute(id, thing); return this; }
+function elem(id) { return document.getElementById(id); } //! shorthand
+document.removeElementById = function(id) { let el = elem(id); return el?.parentElement.removeChild(el); }
+document.removeElementsByClassName = function(clazz) { let els = document.getElementsByClassName(clazz); return els.map(x => x?.parentElement.removeChild(x)); }
+document.removeElementsByTagName = function(tag) { let els = document.getElementsByTagName(tag); return els.map(x => x?.parentElement.removeChild(x)); }
+document.removeAllChildren = function(el) { while (el.firstChild) el.removeChild(el.firstChild); }
 function parseTransformString(tr) { return Object.fromEntries(tr?.match(/\w+\([^\(\)]*/g)?.map(x => x?.split("("))?.map(x => [x[0], x[1]?.split(",")]) ?? []); }
 SVG = {
     draw: function(type, pos) {
         return document.createElement(type).with(type === "circle" ? "cx" : "x", pos.x).with(type === "circle" ? "cy" : "y", pos.y);
     },
     refresh: function(id) {
-        if (typeof(id) === "string") id = document.getElementById(id);
+        if (typeof(id) === "string") id = elem(id);
         id.parentElement.innerHTML += " ";
     },
     circle: function(pos, r, fill=0xFFFFFFFF, stroke=0, strokeColor=0x000000FF) {
