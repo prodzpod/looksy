@@ -18,7 +18,7 @@ Queue.prototype.push = function(thing) {
 }
 Queue.prototype.pop = function() { this.length--; return this.q.pop(); }
 
-function polylabelem(polygon, precision, debug) {
+function polylabel(polygon, precision, debug) {
     precision = precision || 1.0;
 
     // find the bounding box of the outer ring

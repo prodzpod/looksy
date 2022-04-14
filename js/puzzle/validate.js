@@ -149,4 +149,32 @@ VALIDATE = [{
         }
         return wrong;
     }
+}, {
+    "_name": "sun check",
+    "or": ["sun"],
+    "func": (panel, regionNumber, quick) => {
+        let wrong = []; let colors = Object.keys(panel.regionSymbolTypeColors[regionNumber].sun);
+        for (let color of colors) if (panel.regionSymbolColors[regionNumber][color].length !== 2) {
+            wrong.push(...panel.regionSymbolTypeColors[regionNumber].sun[color]);
+            if (quick) return wrong;
+        }
+        return wrong;
+    }
+}, {
+    "_name": "triangle check",
+    "or": ["triangle"],
+    "func": (panel, regionNumber, quick) => {
+        let wrong = []; 
+        for (let raw of panel.regionSymbolTypes[regionNumber].triangle) {
+            let face = Number(raw.split("-")[1]); let count = puzzle.cell(raw).count;
+            let edges = puzzle.facesToEdges[face];
+            let validboys = [];
+            for (let edge of edges) if (panel.walls.includes(edge)) validboys.push(puzzle.edgesToFormula[edge]);
+            if (unique(validboys).length !== count) {
+                wrong.push(raw);
+                if (quick) return;
+            }
+        }
+        return wrong;
+    }
 }]

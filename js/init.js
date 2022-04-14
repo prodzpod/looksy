@@ -95,7 +95,7 @@ window.onload = function() {
         "symbol": {
             "vertices": {1: [{type: "dot", fill: 0xABCDEFFF}]},
             "edges": {},
-            "faces": {1: [{type: "square", fill: 0xFFFFFFFF}], 4: [{type: "square", fill: 0xFFFFFFFF}], 12: [{type: "square", fill: 0x000000FF}]},
+            "faces": {1: [{type: "sun", fill: 0xFFFFFFFF}], 4: [{type: "square", fill: 0xFFFFFFFF}], 12: [{type: "triangle", count: 3, fill: 0x000000FF}]},
             "start": {0: true},
             "gap": {},
             "line": {},

@@ -47,17 +47,29 @@ SVG = {
     }
 }
 SVG.symbol = { //! Edit this to add new symbols
-    sus: function (fill) { return SVG.group(
+    sus: function (skin, fill, _, _) { return SVG.group(
         SVG.path("M0 1A1 1 0 000-1 1 1 0 000 1M.3-.7.3 0 .2 0 .2-.7M.6-.7.6 0 .5 0 .5-.7M.92.4-.1.4-.1.3.95.3", ORIGIN, fill)
     )},
-    dot: function (fill) { return SVG.group(
+    dot: function (skin, fill, soundDots, mode) { return SVG.group(
         SVG.path("M.5.8654 1 0 .5-.8654-.5-.8654-1 0-.5.8654", ORIGIN, 0x000000FF)
     )},
-    square: function (fill) { return SVG.group(
+    square: function (skin, fill, _, _) { return SVG.group(
         SVG.path("M.375-.75Q.75-.75.75-.375L.75.375Q.75.75.375.75L-.375.75Q-.75.75-.75.375L-.75-.375Q-.75-.75-.375-.75", ORIGIN, fill)
     )},
+    sun: function (skin, fill, _, _) { return SVG.group(
+        SVG.path("M-.5625-.5625-.5089-.2143-.8036 0-.5089.2143-.5625.5625-.2143.5089 0 .8036.2143.5089.5625.5625.5089.2143.8036 0 .5089-.2143.5625-.5625.2143-.5089 0-.8036-.2143-.5089", ORIGIN, fill)
+    )},
+    triangle: function (skin, fill, count, _) { 
+        const triDistribution = {
+            "canonical": [[], [1], [2], [3], [2, 2], [2, 3], [3, 3], [2, 3, 2], [3, 2, 3], [3, 3, 3]],
+            "simplified": [[], [1], [2], [1, 2], [2, 2], [2, 3], [1, 2, 3], [2, 3, 2], [3, 2, 3], [3, 3, 3]]
+        }[skin][count]; let ret = []; let triCanonical = "M0-.4286-.4286.3214.4286.3214";
+        for (let y = 0; y < triDistribution.length; y++) for (let x = 0; x < triDistribution[y]; x++) 
+            ret.push(SVG.path(triCanonical, new Pos(0.59 * (2 * x - triDistribution[y] + 1), 0.54 * (2 * y - triDistribution.length + 1)), fill))
+        return SVG.group(...ret);
+    }
 }
 
 SVG.renderSymbol = function(params) {
-    return SVG.symbol[params.type](params.fill);
+    return SVG.symbol[params.type](params.skin ?? "canonical", params.fill, params.count, params.special);
 }

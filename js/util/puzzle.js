@@ -15,6 +15,7 @@ function initData(data) {
     for (_ in data.faces) { data.facesToEdges.push([]); data.facesToFaces.push([]); }
     // other
     data.edgesToAngles = [];
+    data.edgesToFormula = [];
     data.edgesToPosition = [];
     data.edgesToLength = [];
     data.facesToAreas = [];
@@ -106,7 +107,11 @@ function getCentroid(...pos) { return new Pos(Math.prec(pos.reduce((p, c) => p +
 function getEdgeInformation(data) {
     for (let i in data.edges) {
         i = Number(i); let edge = data.edges[i];
-        data.edgesToAngles[i] = Math.prec(Math.posmod(getAngle(data, edge.x, edge.y), Math.PI));
+        let m = Math.prec(Math.posmod(getAngle(data, edge.x, edge.y), Math.PI));
+        let b = Math.prec(data.vertices[edge.x].y - (Math.tan(m) * data.vertices[edge.x].x));
+        data.edgesToAngles[i] = m;
+        if (m === 1.5707963268) data.edgesToFormula[i] = "vertical, x=" + Math.prec(data.vertices[edge.x].x);
+        else data.edgesToFormula[i] = Math.prec(Math.tan(m)) + "x" + (b === 0 ? "" : (b > 0 ? "+" + b : b));
         let x = data.vertices[edge.x]; let y = data.vertices[edge.y];
         data.edgesToLength[i] = Math.prec(Math.hypot(x.x - y.x, x.y - y.y));
     }
@@ -118,7 +123,7 @@ function getFaceInformation(data) {
     for (let i in data.facesToVertices) data.facesToAreas[i] = Math.prec(getArea(...data.facesToVertices[i].map(x => data.vertices[x])));
     data.outside = data.facesToAreas.indexOf(data.facesToAreas.filter(c => c < 0)[0]);
     for (let i in data.facesToVertices) {
-        let label = polylabelem([data.facesToVertices[i].map(x => [data.vertices[x].x, data.vertices[x].y])], 0.001);
+        let label = polylabel([data.facesToVertices[i].map(x => [data.vertices[x].x, data.vertices[x].y])], 0.0001);
         data.facesToPosition[i] = new Pos(Math.prec(label[0]), Math.prec(label[1]));
         data.facesToSize[i] = Math.prec(label.distance / Math.SQRT2);
     }
