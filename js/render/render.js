@@ -24,7 +24,7 @@ function drawVertices(el, data) {
     for (let i in data.vertices) {
         let vert = data.vertices[i];
         if (data.symbol.end[i]) drawVertex(el, vert, data, i, true);
-        else if (data.verticesToEdges[i].length > 1) drawVertex(el, vert, data, i, false);
+        else if (data.verticesToEdges[i]?.length > 1) drawVertex(el, vert, data, i, false);
         if (data.symbol.start[i]) drawStartPoint(el, vert, data, i);
     }
 }
@@ -41,6 +41,15 @@ function drawEdgeWithGap(el, pos1, pos2, gap, data, i) {
         drawEdge(el, pos2, Pos.lerp(pos1, pos2, 1 - (gap / 2)), data, i).with("id", "puzzle-edge-" + i + "-right");
     }
 }
+function drawLine(el, pos1, pos2, data, i) {
+    let ret;
+    ret = SVG.line(pos1, pos2, data.style.lineWidth / 2, data.style.color.lineDefault).with("id", "puzzle-line-" + i);
+    el.appendChild(ret);
+    ret = SVG.circle(pos1, data.style.lineWidth / 2, data.style.color.lineDefault).with("id", "puzzle-line-" + i + "-left");
+    el.appendChild(ret);
+    ret = SVG.circle(pos2, data.style.lineWidth / 2, data.style.color.lineDefault).with("id", "puzzle-line-" + i + "-right");
+    el.appendChild(ret);
+}
 function drawEdges(el, data) {
     for (let i in data.edges) {
         let edge = data.edges[i];
@@ -52,19 +61,19 @@ function drawSymbols(el, data) {
     for (let vert in data.vertices) { //* Vertex Symbols
         if (!data.symbol.vertices[vert]) continue;
         let ret = SVG.symbols(...data.symbol.vertices[vert].map(x => SVG.renderSymbol(x))).with("transform", `translate(${data.vertices[vert].x}, ${data.vertices[vert].y}) scale(${data.style.lineWidth}, ${data.style.lineWidth})`);
-        for (let i = 0; i < ret.childNodes.length; i++) ret.childNodes[i].with("id", "puzzle-symbol-vertex-" + vert + "-" + i);
+        for (let i = 0; i < ret.childNodes.length; i++) ret.childNodes[i].with("class", "symbol").with("id", "puzzle-symbol-vertex-" + vert + "-" + i);
         el.appendChild(ret);
     }
     for (let edge in data.edges) { //* Edge Symbols
         if (!data.symbol.edges[edge]) continue;
         let ret = SVG.symbols(...data.symbol.edges[edge].map(x => SVG.renderSymbol(x))).with("transform", `translate(${data.edgesToPosition[edge].x}, ${data.edgesToPosition[edge].y}) scale(${data.style.lineWidth}, ${data.style.lineWidth})`);
-        for (let i = 0; i < ret.childNodes.length; i++) ret.childNodes[i].with("id", "puzzle-symbol-edge-" + edge + "-" + i);
+        for (let i = 0; i < ret.childNodes.length; i++) ret.childNodes[i].with("class", "symbol").with("id", "puzzle-symbol-edge-" + edge + "-" + i);
         el.appendChild(ret);
     }
     for (let face in data.faces) { //* Face Symbols
         if (data.outside == face || !data.symbol.faces[face]) continue;
         let ret = SVG.symbols(...data.symbol.faces[face].map(x => SVG.renderSymbol(x))).with("transform", `translate(${data.facesToPosition[face].x}, ${data.facesToPosition[face].y}) scale(${data.facesToSize[face]}, ${data.facesToSize[face]})`);
-        for (let i = 0; i < ret.childNodes.length; i++) ret.childNodes[i].with("id", "puzzle-symbol-face-" + face + "-" + i);
+        for (let i = 0; i < ret.childNodes.length; i++) ret.childNodes[i].with("class", "symbol").with("id", "puzzle-symbol-face-" + face + "-" + i);
         el.appendChild(ret);
     }
 }
@@ -92,6 +101,7 @@ function drawPuzzle(id, data) {
     drawFaces(el, data);
     drawVertices(el, data);
     drawEdges(el, data);
+    for (let i in data.edges) if (data.symbol.line[i]) drawLine(el, data.vertices[data.edges[i].x], data.vertices[data.edges[i].y], data, i);
     drawSymbols(el, data);
     let trace = SVG.group().with("id", "line");
     el.appendChild(trace);

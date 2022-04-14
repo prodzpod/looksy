@@ -50,8 +50,11 @@ SVG.symbol = { //! Edit this to add new symbols
     sus: function (fill) { return SVG.group(
         SVG.path("M0 1A1 1 0 000-1 1 1 0 000 1M.3-.7.3 0 .2 0 .2-.7M.6-.7.6 0 .5 0 .5-.7M.92.4-.1.4-.1.3.95.3", ORIGIN, fill)
     )},
-    diamond: function (fill) { return SVG.group(
-        SVG.path("M0 1 1 0 0-1-1 0", ORIGIN, fill)
+    dot: function (fill) { return SVG.group(
+        SVG.path("M.5.8654 1 0 .5-.8654-.5-.8654-1 0-.5.8654", ORIGIN, 0x000000FF)
+    )},
+    square: function (fill) { return SVG.group(
+        SVG.path("M.375-.75Q.75-.75.75-.375L.75.375Q.75.75.375.75L-.375.75Q-.75.75-.75.375L-.75-.375Q-.75-.75-.375-.75", ORIGIN, fill)
     )},
 }
 

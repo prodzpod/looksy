@@ -3,9 +3,9 @@ Looksy v3
 Graph-based Custom [The Witness](https://store.steampowered.com/app/210970/The_Witness/) panel editor and player
 
 ## Todo
-- Tracing / Input handling
 - Symbol Logic
 - Editor & Merger
+- Autosolver
 - Port tutorials over
 
 ## Inspirations / Codes I Stole From

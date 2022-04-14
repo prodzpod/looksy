@@ -19,12 +19,18 @@ function unique(arr) {
     for (let i = 0; i < arr.length; i++) if (!found.includes(arr[i])) found.push(arr[i]);
     return found;
 }
-function swap(arr) {
+function transpose(arr) {
     let ret = [];
     for (let i in arr) for (let o of arr[i]) {
         ret[o] ??= []; ret[o].push(Number(i));
     }
     return ret;
+}
+function intersect(a, b) { return a.filter(k => b.includes(k)); } // intersection of two arrays
+function intersects(a, b) { // check for intersection
+    if (a.length == 0 && b.length == 0) return false;
+    if (a.length == 1) return b.includes(a[0]); if (b.length == 1) return a.includes(b[0]);
+    return a.reduce((k, p) => { return k || b.includes(p);}, false);
 }
 
 class Pair {

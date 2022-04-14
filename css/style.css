@@ -6,3 +6,6 @@
 
 rect  { transform-origin: center; }
 text { font-size: 0.1px; }
+
+.invalid { animation: 0.4s 20 alternate-reverse error; }
+@keyframes error { to {fill: red;}}

@@ -20,6 +20,14 @@ function initData(data) {
     data.facesToAreas = [];
     data.facesToPosition = [];
     data.facesToSize = [];
+    data.cell = function(id) { let ids = id.split("-"); switch (ids[0]) {
+        case "vertex":
+            return this.symbol.vertices[ids[1]][ids[2]];
+        case "edge":
+            return this.symbol.edges[ids[1]][ids[2]];
+        case "face":
+            return this.symbol.faces[ids[1]][ids[2]];
+    }}
 }
 
 const CYCLE_DIRECTION = [[ 
@@ -62,21 +70,26 @@ function findFaces(data) {
 
 function populateVerticesToEdges(data) {
     data.edgesToVertices = data.edges.map(x => [x.x, x.y]);
-    data.verticesToEdges = swap(data.edgesToVertices);
+    data.verticesToEdges = transpose(data.edgesToVertices);
 }
 
-function populateEdgesToFaces(data) {
-    for (let k in data.faces) for (let i = 0; i < data.faces[k].length; i++) {
-        let edge = data.edges.findIndex(x => x.has(data.faces[k].at(i-1)) && x.has(data.faces[k].at(i)));
-        if (edge !== undefined) data.facesToEdges[k].push(edge)
+function getEdgeFromVertexChain(data, ...verts) {
+    let ret = [];
+    for (let i = 0; i < verts.length; i++) {
+        let k = data.edges.findIndex(x => x.has(verts.at(i - 1)) && x.has(verts.at(i)));
+        if (k !== -1) ret.push(k);
     }
-    data.edgesToFaces = swap(data.facesToEdges);
+    return ret;
+}
+function populateEdgesToFaces(data) {
+    for (let k in data.faces) data.facesToEdges[k] = getEdgeFromVertexChain(data, ...data.faces[k]);
+    data.edgesToFaces = transpose(data.facesToEdges);
     for (let i in data.edges) data.edgesToFaces[i] ??= [];
 }
 
 function populateFacesToVertices(data) {
     data.facesToVertices = [...data.faces];
-    data.verticesToFaces = swap(data.facesToVertices);
+    data.verticesToFaces = transpose(data.facesToVertices);
 }
 
 function populateVerticesToVertices(data) {

@@ -29,6 +29,9 @@ function trace(vertex) {
 function traceEnd() {
     let data = window.puzzle; let puzzle = elem("puzzle"); let line = elem("line");
     document.removeAllChildren(line);
+    let invalid = validate();
+    for (let o of Array.from(document.getElementsByClassName("symbol"))) for (let p of Array.from(o.childNodes)) p.classList.remove("invalid");
+    for (let o of invalid) for (let p of Array.from(document.getElementById("puzzle-symbol-" + o).childNodes)) p.classList.add("invalid");
     for (let i in data.vertices) elem("puzzle-tapsolve-" + i).with("stroke-width", 0);
     data.trace = [];
     SVG.refresh(puzzle);
