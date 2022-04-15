@@ -59,18 +59,33 @@ function drawEdges(el, data) {
 
 function drawSymbols(el, data) {
     for (let vert in data.vertices) { //* Vertex Symbols
+        if (window.DEBUG_MODE === "vertex") {
+            let e = SVG.draw("text", data.vertices[vert]).with("fill", "black");
+            e.innerHTML = vert;
+            el.appendChild(e)
+        }
         if (!data.symbol.vertices[vert]) continue;
         let ret = SVG.symbols(...data.symbol.vertices[vert].map(x => SVG.renderSymbol(x))).with("transform", `translate(${data.vertices[vert].x}, ${data.vertices[vert].y}) scale(${data.style.lineWidth}, ${data.style.lineWidth})`);
         for (let i = 0; i < ret.childNodes.length; i++) ret.childNodes[i].with("class", "symbol").with("id", "puzzle-symbol-vertex-" + vert + "-" + i);
         el.appendChild(ret);
     }
     for (let edge in data.edges) { //* Edge Symbols
+        if (window.DEBUG_MODE === "edge") {
+            let e = SVG.draw("text", data.edgesToPosition[edge]).with("fill", "black");
+            e.innerHTML = edge;
+            el.appendChild(e)
+        }
         if (!data.symbol.edges[edge]) continue;
         let ret = SVG.symbols(...data.symbol.edges[edge].map(x => SVG.renderSymbol(x))).with("transform", `translate(${data.edgesToPosition[edge].x}, ${data.edgesToPosition[edge].y}) scale(${data.style.lineWidth}, ${data.style.lineWidth})`);
         for (let i = 0; i < ret.childNodes.length; i++) ret.childNodes[i].with("class", "symbol").with("id", "puzzle-symbol-edge-" + edge + "-" + i);
         el.appendChild(ret);
     }
     for (let face in data.faces) { //* Face Symbols
+        if (window.DEBUG_MODE === "face") {
+            let e = SVG.draw("text", data.facesToPosition[face]).with("fill", "black");
+            e.innerHTML = face;
+            el.appendChild(e)
+        }
         if (data.outside == face || !data.symbol.faces[face]) continue;
         let ret = SVG.symbols(...data.symbol.faces[face].map(x => SVG.renderSymbol(x))).with("transform", `translate(${data.facesToPosition[face].x}, ${data.facesToPosition[face].y}) scale(${data.facesToSize[face]}, ${data.facesToSize[face]})`);
         for (let i = 0; i < ret.childNodes.length; i++) ret.childNodes[i].with("class", "symbol").with("id", "puzzle-symbol-face-" + face + "-" + i);

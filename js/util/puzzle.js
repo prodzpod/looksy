@@ -40,7 +40,7 @@ const CYCLE_DIRECTION = [[
 ]];
 function findFaces(data) {
     // naive implementation for //* Finding all "faces" on a witness puzzle; something about cycles and graphs
-    for (d of CYCLE_DIRECTION) for (let edge of data.edges) { // TODO: !! FIX THIS
+    for (d of CYCLE_DIRECTION) for (let edge of data.edges) { 
         let prev = edge.x; let cur = edge.y; let visited = [];
         while (true) {
             let angle = getAngle(data, cur, prev);
@@ -158,10 +158,71 @@ function primePuzzle(data) {
     getFaceInformation(data);
 
     postProcessArrays(data);
-    
     console.log(data);
 }
 
 function preDrawPuzzle(el, data) {
     data.trace = [];
+}
+
+function findVerticesInSegment(data, pos, angle) {
+    let ret = []; angle = Math.posmod(Math.prec(angle), Math.PI * 2);
+    if (Math.approxeq(angle, Math.PI / 2)) return data.vertices.map((vert, i) => Math.approxeq(vert.x, pos.x) && vert.y < pos.y ? i : '').filter(String);
+    else if (Math.approxeq(angle, 3 * Math.PI / 2)) return data.vertices.map((vert, i) => Math.approxeq(vert.x, pos.x) && vert.y > pos.y ? i : '').filter(String);
+    let m = Math.prec(Math.tan(angle));
+    let b = pos.y - (m * pos.x);
+    for (let i in data.vertices) { let vert = data.vertices[i];
+        if (Math.between(0.5, angle / Math.PI, 1.5)) { if (vert.x > pos.x) continue; }
+        else if (vert.x < pos.x) continue;
+        if (Math.approxeq((vert.y - (m * vert.x)), b)) ret.push(Number(i));
+    }
+    return ret;
+}
+
+function edgeCrossProduct(p1, p2, p3) { return (p3.x - p1.x) * (p2.y - p1.y) - (p2.x - p1.x) * (p3.y - p1.y); }
+function findEdgesInSegment(data, pos, angle) {
+    let ret = []; angle = Math.posmod(Math.prec(angle), Math.PI * 2);
+    let pos2 = new Pos(pos.x + Math.prec(Math.SQRT2 * Math.cos(angle)), pos.y + Math.prec(Math.SQRT2 * Math.sin(angle))); // who cares if it goes outside lol
+    for (let i in data.edges) {
+        let v1 = data.vertices[data.edges[i].x]; let v2 = data.vertices[data.edges[i].y];
+        let d = [edgeCrossProduct(v1, v2, pos), edgeCrossProduct(v1, v2, pos2), edgeCrossProduct(pos, pos2, v1), edgeCrossProduct(pos, pos2, v2)];
+        if ((d[0] * d[1] < 0) && (d[2] * d[3] < 0)) ret.push(Number(i));
+        // could check for intersection, but do we need it?
+    }
+    return remove(ret, data.vertices.findIndex(x => x.x === pos.x && x.y === pos.y)); // remove origin point in case
+}
+
+function posInFace(pos, ...polygon) { // stolen and adapted from Randolph Franklin
+    let ret = false;
+    for (let i in polygon) {
+        if (
+            (Math.between(polygon.at(i-1).y, pos.y, polygon.at(i).y) || Math.between(polygon.at(i).y, pos.y, polygon.at(i-1).y)) &&
+            (pos.x > (pos.y * polygon.at(i).x / polygon.at(i).y))
+        ) ret = !ret;
+    }
+    return ret;
+}
+function getFaceFromVertex(data, pos) { return data.faces.findIndex(x => posInFace(pos, ...x.map(y => data.vertices[y]))); }
+function findFacesInSegment(data, pos, angle) {
+    let edges = findEdgesInSegment(data, pos, angle); let vertices = findVerticesInSegment(data, pos, angle);
+    let ogFace = getFaceFromVertex(data, pos); let currentFace = ogFace; let ret = [];
+    while (edges.length + vertices.length) {
+        let edge = intersect(edges, data.facesToEdges[currentFace] ?? [])[0];
+        if (edge !== undefined) {
+            currentFace = (remove(data.edgesToFaces[edge], currentFace)[0] ?? -1);
+            ret.push(currentFace);
+            edges = remove(edges, edge);
+            continue;
+        } 
+        let vertex = intersect(vertices, data.facesToVertices[currentFace] ?? [])[0];
+        if (vertex !== undefined) { // TODO: debug this
+            let nears = remove(data.verticesToEdges[vertex], ...intersect(data.facesToEdges[currentFace], data.verticesToEdges[vertex]));
+            currentFace = data.facesToEdges.findIndex((x, i) => i !== currentFace && intersect(x, nears).length >= Math.min(nears.length, 2));
+            ret.push(currentFace);
+            vertices = remove(vertices, vertex);
+            continue;
+        }
+        break;
+    }
+    return remove(ret, ogFace, data.outside);
 }

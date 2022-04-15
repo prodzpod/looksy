@@ -47,7 +47,7 @@ window.onload = function() {
             new Pos(0.9, 0.5),
             new Pos(0.9, 0.7),
             new Pos(0.9, 0.9),
-            new Pos(0.95, 0.95)
+            new Pos(0.85, 0.85)
         ],
         "edges": [
             new Edge(0, 1),

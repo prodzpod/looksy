@@ -6,6 +6,7 @@ Math.demod = function(n, a) { return n - (n % a); }
 Math.posmod = function(n, a) { return ((n % a) + a) % a; }
 Math.color = function(a) { return "#" + a.toString(16).padStart(8, "0"); }
 Math.prec = function(n, a=10) { return Math.round(n * Math.pow(10, a)) / Math.pow(10, a); }
+Math.approxeq = function(a, b, t=10) { return this.prec(a, t) === this.prec(b, t); }
 function getAngle(data, x, y) {
     return Math.atan2(data.vertices[y].y - data.vertices[x].y, data.vertices[y].x - data.vertices[x].x);
 }
